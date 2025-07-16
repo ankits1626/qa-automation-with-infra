@@ -1,0 +1,30 @@
+digraph G {
+  # Arrows represent an "unlocks" relationship (opposite of dependency). So chosen
+  # because the layout looks more natural that way.
+  # To represent subgraph dependencies, subgraphs are represented by BEGIN/END nodes.
+  # To render: `dot -Tsvg SystemsTestStackTestPipelineE8D5580A.dot > graph.svg`, open in a browser.
+  node [shape="box"];
+"BEGIN Build" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Build" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Build.Synth";
+"Source.ankits1626/qa-automation" -> "Build.Synth";
+"BEGIN Build" -> "Build.Synth";
+"Build.Synth" -> "END Build";
+"BEGIN UpdatePipeline" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END UpdatePipeline" [shape="cds", style="filled", fillcolor="#b7deff"];
+"UpdatePipeline.SelfMutate";
+"Build.Synth" -> "UpdatePipeline.SelfMutate";
+"BEGIN UpdatePipeline" -> "UpdatePipeline.SelfMutate";
+"UpdatePipeline.SelfMutate" -> "END UpdatePipeline";
+"BEGIN TestBuild" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END TestBuild" [shape="cds", style="filled", fillcolor="#b7deff"];
+"UpdatePipeline.SelfMutate" -> "BEGIN TestBuild";
+"TestBuild.BuildTests";
+"BEGIN TestBuild" -> "TestBuild.BuildTests";
+"TestBuild.BuildTests" -> "END TestBuild";
+"BEGIN Source" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Source" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Source.ankits1626/qa-automation";
+"BEGIN Source" -> "Source.ankits1626/qa-automation";
+"Source.ankits1626/qa-automation" -> "END Source";
+}

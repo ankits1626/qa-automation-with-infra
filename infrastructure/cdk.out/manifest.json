@@ -1,0 +1,640 @@
+{
+  "version": "45.0.0",
+  "artifacts": {
+    "DeviceFarmStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "DeviceFarmStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "DeviceFarmStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-west-2",
+      "properties": {
+        "templateFile": "DeviceFarmStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-west-2",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-west-2",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-west-2/e593b33a72c1d567eb04b397dfe4101e29eb5eb53f3cd2708458da241521c80c.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "DeviceFarmStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-west-2",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "DeviceFarmStack.assets"
+      ],
+      "metadata": {
+        "/DeviceFarmStack/AndroidProject": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AndroidProject"
+          }
+        ],
+        "/DeviceFarmStack/IOSProject": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IOSProject"
+          }
+        ],
+        "/DeviceFarmStack/AndroidDevicePool": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AndroidDevicePool"
+          }
+        ],
+        "/DeviceFarmStack/IOSDevicePool": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IOSDevicePool"
+          }
+        ],
+        "/DeviceFarmStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/DeviceFarmStack/ExportsWriterapsouth1D5FC4E14/Resource": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/DeviceFarmStack/ExportsWriterapsouth1D5FC4E14/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsWriterapsouth1D5FC4E14CB72EBD5"
+          }
+        ],
+        "/DeviceFarmStack/Custom::CrossRegionExportWriterCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/DeviceFarmStack/Custom::CrossRegionExportWriterCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCrossRegionExportWriterCustomResourceProviderRoleC951B1E1"
+          }
+        ],
+        "/DeviceFarmStack/Custom::CrossRegionExportWriterCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCrossRegionExportWriterCustomResourceProviderHandlerD8786E8A"
+          }
+        ],
+        "/DeviceFarmStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/DeviceFarmStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "DeviceFarmStack"
+    },
+    "SystemsTestStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "SystemsTestStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "SystemsTestStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/ap-south-1",
+      "properties": {
+        "templateFile": "SystemsTestStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-ap-south-1/4d27559a76c06152475a7f91f010f355ed74a87bbf0895daf445fba2a6583981.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "SystemsTestStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "DeviceFarmStack",
+        "SystemsTestStack.assets"
+      ],
+      "metadata": {
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "autoDeleteObjects": true,
+              "removalPolicy": "destroy"
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBucket53923566"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/Policy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "bucket": "*"
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBucketPolicy713FBEF3"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/AutoDeleteObjectsCustomResource": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBucketAutoDeleteObjectsCustomResource0BB8033E"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBucketNotificationsE68500E7"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBucket/SystemTestsBucket/AllowBucketNotificationsToSystemsTestStackSystemTestsTriggerSystemTestsTriggerFunctionC63A8692": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBucketAllowBucketNotificationsToSystemsTestStackSystemTestsTriggerSystemTestsTriggerFunctionC63A86928F7776F5"
+          }
+        ],
+        "/SystemsTestStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/SystemsTestStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/SystemsTestStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "buildSpec": "*",
+              "environment": {
+                "buildImage": {
+                  "type": "*",
+                  "defaultComputeType": "BUILD_GENERAL1_SMALL",
+                  "imageId": "*",
+                  "imagePullPrincipalType": "CODEBUILD",
+                  "secretsManagerCredentials": "*",
+                  "repository": "*"
+                },
+                "computeType": "BUILD_GENERAL1_SMALL"
+              },
+              "projectName": "*"
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder/Role": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "roleName": "*",
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder/Role/ImportRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBuildProjectTestSuiteBuilderRoleAB71C8E1"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder/Role/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBuildProjectTestSuiteBuilderRoleDefaultPolicyEF7C0474"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsBuildProject/TestSuiteBuilder/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsBuildProjectTestSuiteBuilder17EC71D0"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "environment": "*",
+              "timeout": "*",
+              "code": "*",
+              "handler": "*",
+              "runtime": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsTriggerSystemTestsTriggerFunctionServiceRoleB25EBC18"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsTriggerSystemTestsTriggerFunctionServiceRoleDefaultPolicyD7A684DA"
+          }
+        ],
+        "/SystemsTestStack/SystemTestsTrigger/SystemTestsTriggerFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SystemTestsTriggerSystemTestsTriggerFunctionECE8D76D"
+          }
+        ],
+        "/SystemsTestStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addManagedPolicy": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/ImportRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/SystemsTestStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+          }
+        ],
+        "/SystemsTestStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/SystemsTestStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36"
+          }
+        ],
+        "/SystemsTestStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
+          }
+        ],
+        "/SystemsTestStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/SystemsTestStack/ExportsReader/Resource": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          }
+        ],
+        "/SystemsTestStack/ExportsReader/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsReader8B249524"
+          }
+        ],
+        "/SystemsTestStack/Custom::CrossRegionExportReaderCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/SystemsTestStack/Custom::CrossRegionExportReaderCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCrossRegionExportReaderCustomResourceProviderRole10531BBD"
+          }
+        ],
+        "/SystemsTestStack/Custom::CrossRegionExportReaderCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCrossRegionExportReaderCustomResourceProviderHandler46647B68"
+          }
+        ],
+        "/SystemsTestStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/SystemsTestStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "SystemsTestStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  },
+  "minimumCliVersion": "2.1020.2"
+}

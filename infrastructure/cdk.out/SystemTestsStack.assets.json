@@ -1,0 +1,20 @@
+{
+  "version": "45.0.0",
+  "files": {
+    "922ba67b9f6801a2f2ab654df34e828f0ecb6bc44357e1d3158176db23969f40": {
+      "displayName": "SystemTestsStack Template",
+      "source": {
+        "path": "SystemTestsStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "922ba67b9f6801a2f2ab654df34e828f0ecb6bc44357e1d3158176db23969f40.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
