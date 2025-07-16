@@ -1,29 +1,21 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
-from stacks.device_farm_stack import DeviceFarmStack
-from stacks.system_tests_stack import SystemsTestStack
-
+from stacks.pipeline_stack import PipelineStack
+from stacks.stages.system_tests_stage import SystemTestsStage
 
 app = cdk.App()
-device_farm_env = cdk.Environment(region="us-west-2")
 
-# Systems test stack can be deployed anywhere
-systems_test_env = cdk.Environment(region="ap-south-1")  # Uses default region
-
-device_farm_stack = DeviceFarmStack(
-    app, 
-    "DeviceFarmStack", 
-    env=device_farm_env, 
-    cross_region_references=True
+pipeline_stack = PipelineStack(
+    app,
+    "PipelineStack",
+    github_repo="ankits1626/qa-automation-with-infra",  # Replace with your GitHub repo
+    codestar_connection_arn="arn:aws:codeconnections:ap-south-1:637423487119:connection/0c9cafc8-09e5-4bdd-ac24-6c259df0a22c",  # Replace with your CodeStar connection ARN
+    github_branch="main",
+    env=cdk.Environment(
+        account="637423487119",
+        region="ap-south-1"  # Explicit region for the pipeline
+    )  # Pipeline can be deployed in any region
 )
 
-systems_test_stack = SystemsTestStack(
-    app, 
-    "SystemsTestStack",
-    android_project_arn=device_farm_stack.android_project_arn,
-    ios_project_arn=device_farm_stack.ios_project_arn,
-    env=systems_test_env,
-    cross_region_references=True
-)
 
 app.synth()

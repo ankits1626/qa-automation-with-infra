@@ -1,0 +1,68 @@
+digraph G {
+  # Arrows represent an "unlocks" relationship (opposite of dependency). So chosen
+  # because the layout looks more natural that way.
+  # To represent subgraph dependencies, subgraphs are represented by BEGIN/END nodes.
+  # To render: `dot -Tsvg PipelineStackSystemTestsPipeline488F762B.dot > graph.svg`, open in a browser.
+  node [shape="box"];
+"BEGIN Build" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Build" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Build.Synth";
+"Source.ankits1626/qa-automation-with-infra" -> "Build.Synth";
+"BEGIN Build" -> "Build.Synth";
+"Build.Synth" -> "END Build";
+"BEGIN UpdatePipeline" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END UpdatePipeline" [shape="cds", style="filled", fillcolor="#b7deff"];
+"UpdatePipeline.SelfMutate";
+"Build.Synth" -> "UpdatePipeline.SelfMutate";
+"BEGIN UpdatePipeline" -> "UpdatePipeline.SelfMutate";
+"UpdatePipeline.SelfMutate" -> "END UpdatePipeline";
+"BEGIN Assets" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Assets" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Assets.FileAsset1";
+"UpdatePipeline.SelfMutate" -> "Assets.FileAsset1";
+"Assets.FileAsset2";
+"UpdatePipeline.SelfMutate" -> "Assets.FileAsset2";
+"Assets.FileAsset3";
+"UpdatePipeline.SelfMutate" -> "Assets.FileAsset3";
+"Assets.FileAsset4";
+"UpdatePipeline.SelfMutate" -> "Assets.FileAsset4";
+"BEGIN Assets" -> "Assets.FileAsset1";
+"BEGIN Assets" -> "Assets.FileAsset2";
+"BEGIN Assets" -> "Assets.FileAsset3";
+"BEGIN Assets" -> "Assets.FileAsset4";
+"Assets.FileAsset1" -> "END Assets";
+"Assets.FileAsset2" -> "END Assets";
+"Assets.FileAsset3" -> "END Assets";
+"Assets.FileAsset4" -> "END Assets";
+"BEGIN Deploy" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Deploy" [shape="cds", style="filled", fillcolor="#b7deff"];
+"UpdatePipeline.SelfMutate" -> "BEGIN Deploy";
+"BEGIN Deploy.DeviceFarmStack" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Deploy.DeviceFarmStack" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Deploy.DeviceFarmStack.Deploy";
+"Deploy.DeviceFarmStack.Prepare" -> "Deploy.DeviceFarmStack.Deploy";
+"Deploy.DeviceFarmStack.Prepare";
+"Build.Synth" -> "Deploy.DeviceFarmStack.Prepare";
+"Assets.FileAsset1" -> "Deploy.DeviceFarmStack.Prepare";
+"BEGIN Deploy.DeviceFarmStack" -> "Deploy.DeviceFarmStack.Prepare";
+"Deploy.DeviceFarmStack.Deploy" -> "END Deploy.DeviceFarmStack";
+"BEGIN Deploy.SystemsTestStack" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Deploy.SystemsTestStack" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Deploy.DeviceFarmStack" -> "BEGIN Deploy.SystemsTestStack";
+"Deploy.SystemsTestStack.Deploy";
+"Deploy.SystemsTestStack.Prepare" -> "Deploy.SystemsTestStack.Deploy";
+"Deploy.SystemsTestStack.Prepare";
+"Build.Synth" -> "Deploy.SystemsTestStack.Prepare";
+"Assets.FileAsset2" -> "Deploy.SystemsTestStack.Prepare";
+"Assets.FileAsset3" -> "Deploy.SystemsTestStack.Prepare";
+"Assets.FileAsset4" -> "Deploy.SystemsTestStack.Prepare";
+"BEGIN Deploy.SystemsTestStack" -> "Deploy.SystemsTestStack.Prepare";
+"Deploy.SystemsTestStack.Deploy" -> "END Deploy.SystemsTestStack";
+"BEGIN Deploy" -> "BEGIN Deploy.DeviceFarmStack";
+"END Deploy.SystemsTestStack" -> "END Deploy";
+"BEGIN Source" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Source" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Source.ankits1626/qa-automation-with-infra";
+"BEGIN Source" -> "Source.ankits1626/qa-automation-with-infra";
+"Source.ankits1626/qa-automation-with-infra" -> "END Source";
+}

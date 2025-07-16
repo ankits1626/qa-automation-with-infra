@@ -1,0 +1,66 @@
+{
+  "version": "45.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "PipelineStack/Deploy/SystemsTestStack/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "../asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-south-1",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-south-1"
+        }
+      }
+    },
+    "884f855304335be7e6c313cfcb4e764bf7a9a31a5397d9174b7858be3b95745d": {
+      "displayName": "SystemTestsTrigger/SystemTestsTriggerFunction/Code",
+      "source": {
+        "path": "../asset.884f855304335be7e6c313cfcb4e764bf7a9a31a5397d9174b7858be3b95745d",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-south-1",
+          "objectKey": "884f855304335be7e6c313cfcb4e764bf7a9a31a5397d9174b7858be3b95745d.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-south-1"
+        }
+      }
+    },
+    "d41c8e6342cd078b5ea5aec11522bdb605eae00f4bb98a3fb0b44c827e9b5ca9": {
+      "displayName": "PipelineStack/Deploy/SystemsTestStack/Custom::CrossRegionExportReaderCustomResourceProvider Code",
+      "source": {
+        "path": "../asset.d41c8e6342cd078b5ea5aec11522bdb605eae00f4bb98a3fb0b44c827e9b5ca9",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-south-1",
+          "objectKey": "d41c8e6342cd078b5ea5aec11522bdb605eae00f4bb98a3fb0b44c827e9b5ca9.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-south-1"
+        }
+      }
+    },
+    "d11c33dddad35f2e2e10570afe8940e90d874ff5c801fd2da06e81e30be51900": {
+      "displayName": "Deploy-SystemsTestStack Template",
+      "source": {
+        "path": "PipelineStackDeploySystemsTestStack6134AF7A.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-south-1",
+          "objectKey": "d11c33dddad35f2e2e10570afe8940e90d874ff5c801fd2da06e81e30be51900.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
