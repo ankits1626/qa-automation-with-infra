@@ -45,7 +45,7 @@ class PipelineStack(Stack):
                     "export PATH=$HOME/.local/bin:$PATH",
                     "uv sync",
                     "npm install -g aws-cdk",
-                    "uv run cdk synth --app 'python pipeline_app.py'"
+                    "uv run cdk synth"
                 ],
                 primary_output_directory="infrastructure/cdk.out",
                 build_environment=codebuild.BuildEnvironment(
