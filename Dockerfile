@@ -10,11 +10,8 @@ COPY . /workspace/
 # Make scripts executable
 RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
 
-# Set proper ownership (CodeBuild runs as codebuild user)
-RUN chown -R codebuild:codebuild /workspace
-
-# Switch to codebuild user
-USER codebuild
+# The CodeBuild base image already has the right user setup
+# No need to manually chown or switch users - CodeBuild handles this
 
 # Set the default working directory
 WORKDIR /workspace
