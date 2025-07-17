@@ -16,6 +16,7 @@ class SystemTestsBuildProject(Construct):
                 "pre_build": {
                     "commands": [
                         "echo 'Execution started'",
+                        "******** echo dummy update pushed to github"
                         f"echo 'Android Device Farm Project ARN: {android_project_arn}'",
                         f"echo 'iOS Device Farm Project ARN: {ios_project_arn}'",
                         "echo 'Building test suite'"
