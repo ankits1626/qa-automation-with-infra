@@ -23,6 +23,9 @@ class SystemsTestStack(Stack):
             ios_project_arn=ios_project_arn
         )
 
+        # Grant the CodeBuild project read access to the S3 bucket
+        self.system_tests_bucket.bucket.grant_read(self.codebuild_project.project)
+
         # Add Lambda trigger for app file uploads
         self.system_tests_trigger = SystemTestsTrigger(
             self, "SystemTestsTrigger",
