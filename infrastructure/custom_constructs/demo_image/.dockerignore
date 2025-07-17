@@ -1,0 +1,31 @@
+# Exclude CDK output directory to prevent infinite recursion
+**/cdk.out
+cdk.out
+
+# Exclude Python virtual environments
+**/.venv
+.venv
+**/__pycache__
+__pycache__
+
+# Exclude Node.js dependencies
+**/node_modules
+node_modules
+
+# Exclude version control
+.git
+.gitignore
+
+# Exclude temporary files
+*.tmp
+*.log
+.DS_Store
+
+# Exclude UV lock files (they'll be regenerated)
+**/uv.lock
+uv.lock
+
+# Exclude any build artifacts
+**/dist
+**/build
+**/*.zip

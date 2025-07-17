@@ -47,7 +47,7 @@ class SystemTestsBuildProject(Construct):
                 build_image=codebuild.LinuxBuildImage.from_asset(
                     self, "CustomBuildImage",
                     # Dockerfile is now in infrastructure directory
-                    directory=os.path.join(os.path.dirname(__file__), "..")
+                    directory=os.path.join(os.path.dirname(__file__), "demo_image")
                 ),
                 compute_type=codebuild.ComputeType.SMALL,
                 privileged=True  # Enable privileged mode for Docker operations
