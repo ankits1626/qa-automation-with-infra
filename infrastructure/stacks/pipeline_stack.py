@@ -1,72 +1,75 @@
 from aws_cdk import (
+    Stack,
+    pipelines,
     aws_codebuild as codebuild,
     aws_iam as iam,
 )
 from constructs import Construct
-import os
+from stacks.stages.system_tests_stage import SystemTestsStage
+from aws_cdk.aws_codepipeline import PipelineType
+class PipelineStack(Stack):
 
-class SystemTestsBuildProject(Construct):
-
-    def __init__(self, scope: Construct, construct_id: str, android_project_arn: str, ios_project_arn: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, github_repo: str, codestar_connection_arn: str, github_branch: str = "main", **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # Create buildspec that prints the required information and runs test suite
-        buildspec = codebuild.BuildSpec.from_object({
-            "version": "0.2",
-            "phases": {
-                "pre_build": {
-                    "commands": [
-                        "echo 'Execution started'",
-                        f"echo 'Android Device Farm Project ARN: {android_project_arn}'",
-                        f"echo 'iOS Device Farm Project ARN: {ios_project_arn}'",
-                        "echo 'Current working directory:' $(pwd)",
-                        "echo 'Available directories:'",
-                        "ls -la /workspace/",
-                        "echo 'Test suite directory contents:'",
-                        "ls -la /workspace/test-suite/ || echo 'test-suite directory not found'"
-                    ]
-                },
-                "build": {
-                    "commands": [
-                        "echo 'Building test suite'",
-                        "cd /workspace/test-suite",
-                        "./scripts/build-and-zip.sh",
-                        "echo 'Test suite build completed'",
-                        "ls -la system_tests.zip || echo 'system_tests.zip not found'"
-                    ]
-                }
-            }
-        })
-
-        # Create CodeBuild project with custom image
-        self.project = codebuild.Project(
-            self, "SystemTestsBuildProject",
-            project_name="system-tests-build-project",
-            build_spec=buildspec,
-            environment=codebuild.BuildEnvironment(
-                build_image=codebuild.LinuxBuildImage.from_asset(
-                    self, "CustomBuildImage",
-                    # Path from infrastructure/custom_constructs/ to repository root
-                    directory=os.path.join(os.path.dirname(__file__), "../../..")
+        # Create the pipeline
+        self.pipeline = pipelines.CodePipeline(
+            self, "SystemTestsPipeline",
+            pipeline_name="system-tests-pipeline",
+            pipeline_type=PipelineType.V2,
+           cross_account_keys=True,
+            docker_enabled_for_self_mutation=True,
+            docker_enabled_for_synth=True,
+            self_mutation=True,
+            synth=pipelines.CodeBuildStep(
+                "Synth",
+                input=pipelines.CodePipelineSource.connection(
+                    repo_string=github_repo,
+                    branch=github_branch,
+                    connection_arn=codestar_connection_arn
                 ),
-                compute_type=codebuild.ComputeType.SMALL,
-                privileged=True  # Enable privileged mode for Docker operations
+                role_policy_statements=[
+                    iam.PolicyStatement(
+                        actions=["sts:AssumeRole"],
+                        resources=["*"],
+                        conditions={
+                            "StringEquals": {
+                                "iam:ResourceTag/aws-cdk:bootstrap-role": "lookup"
+                            }
+                        },
+                    ),
+                ],
+                commands=[
+                    'cd "infrastructure"',
+                    "curl -LsSf https://astral.sh/uv/install.sh | sh",
+                    "export PATH=$HOME/.local/bin:$PATH",
+                    "uv sync",
+                    "npm install -g aws-cdk",
+                    "uv run cdk synth"
+                ],
+                primary_output_directory="infrastructure/cdk.out",
+                build_environment=codebuild.BuildEnvironment(
+                    build_image=codebuild.LinuxBuildImage.STANDARD_7_0
+                ),
+                partial_build_spec=codebuild.BuildSpec.from_object(
+                    {
+                        "version": "0.2",
+                        "phases": {
+                            "install": {
+                                "runtime-versions": {
+                                    "nodejs": "20.x",
+                                    "python": "3.12",
+                                },
+                            },
+                        },
+                    }
+                ),
             )
         )
 
-        # Add IAM permissions for Device Farm operations
-        self.project.add_to_role_policy(
-            iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=[
-                    "devicefarm:ListProjects",
-                    "devicefarm:CreateUpload", 
-                    "devicefarm:GetUpload",
-                    "devicefarm:ScheduleRun",
-                    "devicefarm:GetRun",
-                    "devicefarm:ListRuns",
-                    "devicefarm:ListDevicePools"
-                ],
-                resources=["*"]
-            )
+        # Add deployment stage
+        deploy_stage = SystemTestsStage(
+            self, "Deploy"
         )
+        
+        self.pipeline.add_stage(deploy_stage)
