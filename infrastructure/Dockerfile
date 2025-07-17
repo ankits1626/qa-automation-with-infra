@@ -5,17 +5,12 @@ FROM public.ecr.aws/codebuild/amazonlinux2-x86_64-standard:5.0
 WORKDIR /workspace
 
 # Copy the entire repository structure
-COPY . /workspace/
-
-# Install Node.js dependencies for test-suite (if needed upfront)
-# We'll do this in buildspec for flexibility, but you can uncomment if you want it baked in
-# RUN cd test-suite && npm install
+# Since this Dockerfile will be in infrastructure/, we need to copy both dirs
+COPY . /workspace/infrastructure/
+COPY ../test-suite /workspace/test-suite/
 
 # Make scripts executable
-RUN chmod +x test-suite/scripts/build-and-zip.sh
-
-# Install any additional system dependencies if needed
-# RUN yum update -y && yum install -y <additional-packages>
+RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
 
 # Set proper ownership (CodeBuild runs as codebuild user)
 RUN chown -R codebuild:codebuild /workspace
