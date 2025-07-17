@@ -4,10 +4,8 @@ FROM public.ecr.aws/codebuild/amazonlinux2-x86_64-standard:5.0
 # Set working directory
 WORKDIR /workspace
 
-# Copy the entire repository structure
-# Since this Dockerfile will be in infrastructure/, we need to copy both dirs
-COPY . /workspace/infrastructure/
-COPY ../test-suite /workspace/test-suite/
+# Copy the entire repository structure (. means current directory which is repo root)
+COPY . /workspace/
 
 # Make scripts executable
 RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
