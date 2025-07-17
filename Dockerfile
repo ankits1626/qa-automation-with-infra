@@ -1,17 +1,40 @@
-# Use the same base image as CodeBuild Standard 7.0
-FROM public.ecr.aws/codebuild/amazonlinux2-x86_64-standard:5.0
+# Use lightweight Ubuntu with Node.js
+FROM node:20-slim
+
+# Update package list and install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    python3 \
+    python3-pip \
+    build-essential \
+    zip \
+    unzip \
+    jq \
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI v2 (more reliable than pip install)
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf awscliv2.zip aws
+
+# Install pnpm globally
+RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /workspace
 
-# Copy the entire repository structure (. means current directory which is repo root)
+# Copy the entire repository structure
 COPY . /workspace/
 
 # Make scripts executable
 RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
 
-# The CodeBuild base image already has the right user setup
-# No need to manually chown or switch users - CodeBuild handles this
+# Install Node.js dependencies for test-suite using pnpm
+RUN cd /workspace/test-suite && pnpm install
 
 # Set the default working directory
 WORKDIR /workspace
