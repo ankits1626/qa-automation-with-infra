@@ -1,5 +1,4 @@
 import { Launcher } from '@wdio/cli';
-import * as path from 'path';
 import * as fs from 'fs';
 
 /**
@@ -33,15 +32,21 @@ async function runTests() {
 
     // Determine if we're running from source (TypeScript) or compiled (JavaScript)
     const isCompiledMode = __filename.endsWith('.js');
-    const configDir = isCompiledMode 
-      ? path.join(__dirname, 'configs') 
-      : path.join(__dirname, 'configs');
+    const isDeviceFarm = target.startsWith('df.') || process.env.DEVICEFARM_DEVICE_POOL_ARN;
     
-    const configFileName = `${target}.config`;
-    const configExtension = isCompiledMode ? '.js' : '.ts';
-    const configPath = path.join(configDir, configFileName + configExtension);
-
-    console.log(`📁 Looking for config at: ${configPath}`);
+    let configPath: string;
+    
+    if (isDeviceFarm) {
+      // Device Farm specific path handling
+      configPath = `./wdio/configs/${target}.config.js`;
+      console.log(`📁 Looking for config at: ${process.cwd()}/${configPath}`);
+    } else {
+      // Local development
+      const configDir = isCompiledMode ? './wdio/configs' : './wdio/configs';
+      const configExtension = isCompiledMode ? '.js' : '.ts';
+      configPath = `${configDir}/${target}.config${configExtension}`;
+      console.log(`📁 Looking for config at: ${process.cwd()}/${configPath}`);
+    }
 
     // Check if config file exists
     if (!fs.existsSync(configPath)) {
@@ -50,6 +55,7 @@ async function runTests() {
       
       // List available config files
       try {
+        const configDir = './wdio/configs';
         const files = fs.readdirSync(configDir);
         const configFiles = files
           .filter(file => file.endsWith('.config.ts') || file.endsWith('.config.js'))
@@ -67,20 +73,12 @@ async function runTests() {
 
     console.log('✅ Configuration loaded successfully');
     
-    // Change to project root directory so WebdriverIO can find test files
-    const projectRoot = path.resolve(__dirname, '..');
-    console.log(`📂 Changing to project root: ${projectRoot}`);
-    process.chdir(projectRoot);
-    console.log(`📍 Current working directory: ${process.cwd()}`);
-    
-    // Debug: Check if test file exists
-    const testFile = path.join(process.cwd(), 'src/tests/setup/framework.test.ts');
-    console.log(`🔍 Looking for test file at: ${testFile}`);
-    console.log(`📁 Test file exists: ${fs.existsSync(testFile)}`);
-    
-    // Add delay to ensure proper timing
-    console.log('⏱️  Allowing time for environment setup...');
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Device Farm specific setup
+    if (isDeviceFarm) {
+      console.log('🔥 Device Farm environment detected');
+      console.log(`📱 Device Pool ARN: ${process.env.DEVICEFARM_DEVICE_POOL_ARN || 'not set'}`);
+      console.log(`📋 Working directory: ${process.cwd()}`);
+    }
     
     // Create WebdriverIO launcher with the config file path
     const launcher = new Launcher(configPath);

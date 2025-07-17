@@ -17,18 +17,19 @@ echo "📁  Copying required files for Device Farm..."
 # Copy compiled JavaScript
 cp -r dist devicefarm-build/
 
-# Copy node_modules (required for Device Farm)
+# Copy ALL node_modules (including transitive dependencies)
 cp -r node_modules devicefarm-build/
 
 # Copy package files
 cp package.json devicefarm-build/
-cp pnpm-lock.yaml devicefarm-build/
 
 # Create npm-compatible package-lock.json for Device Farm
-echo "🔄  Converting pnpm-lock.yaml to package-lock.json for Device Farm compatibility..."
+echo "🔄  Creating package-lock.json for Device Farm compatibility..."
 cd devicefarm-build
-# Device Farm expects package-lock.json, so we'll create a basic one
-echo '{"lockfileVersion": 1}' > package-lock.json
+
+# Create a proper package-lock.json
+npm install --package-lock-only --no-save 2>/dev/null || echo '{"lockfileVersion": 1}' > package-lock.json
+
 cd ..
 
 echo "📋  Creating Device Farm test specification..."
@@ -44,8 +45,11 @@ cd ..
 
 echo "📊  Bundle information:"
 echo "   📦 Size: $(du -h system_tests.zip | cut -f1)"
-echo "   📁 Contents:"
-unzip -l system_tests.zip | head -20
+echo "   📁 Key contents:"
+echo "   - dist/ (compiled TypeScript)"
+echo "   - node_modules/ (all dependencies)"
+echo "   - package.json"
+echo "   - package-lock.json"
 
 echo ""
 echo "✅ Done: system_tests.zip is ready for upload to AWS Device Farm"

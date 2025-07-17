@@ -6,16 +6,10 @@
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
-    "types": ["node", "mocha", "@wdio/globals/types"]
+    "types": ["node", "mocha"],
+    "skipLibCheck": true                 // ✅ ignore .d.ts errors in node_modules
   },
-  "include": [
-    "src/**/*.ts",
-    "wdio/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*.ts", "wdio/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

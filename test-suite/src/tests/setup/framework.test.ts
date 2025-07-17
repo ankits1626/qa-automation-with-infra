@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 describe('Framework Setup Test', () => {
   it('should always pass - basic framework validation', async () => {
     console.log('🚀 Starting framework validation test...');
@@ -12,7 +13,7 @@ describe('Framework Setup Test', () => {
     console.log('🏆 FRAMEWORK VALIDATION COMPLETE - ALL SYSTEMS GO!');
     
     // Simple assertion that always passes
-    expect(true).toBe(true);
+    expect(true).to.be.true;
   });
   
   it('should verify test environment setup', async () => {
@@ -29,6 +30,6 @@ describe('Framework Setup Test', () => {
     
     // Always pass
     console.log('✅ Environment check completed successfully');
-    expect(1 + 1).toBe(2);
+    expect(1 + 1).to.equal(2);
   });
 });

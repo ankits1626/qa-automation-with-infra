@@ -1,5 +1,8 @@
 import * as path from 'path';
 
+const isCompiled = __filename.endsWith('.js');
+const configExt = isCompiled ? 'js' : 'ts';
+///
 export const baseConfig = {
   //
   // Test Configuration
@@ -9,10 +12,7 @@ export const baseConfig = {
   //
   // Test Files
   //
-  specs: [
-    path.join(__dirname, '../../src/tests/**/*.test.ts'),
-    path.join(__dirname, '../../src/tests/**/*.spec.ts')
-  ],
+  specs: [path.resolve(__dirname, `../../src/tests/**/*.${configExt}`)],
   exclude: [
     // 'path/to/excluded/files'
   ],

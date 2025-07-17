@@ -1,0 +1,100 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - export NVM_DIR=$HOME/.nvm
+      - . $NVM_DIR/nvm.sh
+      - echo "✅ Switching to Node.js 18"
+      - nvm install 20  # install Node.js 18
+      - nvm use 20      # use Node.js 18
+      - node --version
+      - npm --version
+      - avm 2.11.5
+      - appium --version
+      - export APPIUM_BASE_PATH=/wd/hub
+      - echo $DEVICEFARM_TEST_PACKAGE_PATH
+      - npm install  # install dependencies from lock file
+      
+      
+  pre_test:
+    commands:
+      - |-
+        if [ $DEVICEFARM_DEVICE_PLATFORM_NAME = "iOS" ];
+         then
+           APPIUM_VERSION=$(appium --version);
+           if [ $(echo $APPIUM_VERSION | cut -d "." -f1) -ge 2 ];
+           then
+             if [ $(echo $APPIUM_VERSION | cut -d "." -f2) -ge 11 ];
+             then
+               DEVICEFARM_WDA_DERIVED_DATA_PATH=$DEVICEFARM_WDA_DERIVED_DATA_PATH_V9;
+             else
+               DEVICEFARM_WDA_DERIVED_DATA_PATH=$DEVICEFARM_WDA_DERIVED_DATA_PATH_V8;
+             fi;
+           else
+             DEVICEFARM_WDA_DERIVED_DATA_PATH=$DEVICEFARM_WDA_DERIVED_DATA_PATH_V7;
+           fi;
+
+          if [ $(echo $DEVICEFARM_DEVICE_OS_VERSION | cut -d "." -f 1) -le 16 ];
+          then
+            DEVICEFARM_DEVICE_UDID_FOR_APPIUM=$(echo $DEVICEFARM_DEVICE_UDID | tr -d "-");
+          else
+            DEVICEFARM_DEVICE_UDID_FOR_APPIUM=$DEVICEFARM_DEVICE_UDID;
+          fi;
+        fi;
+
+      - |-
+        appium --base-path=$APPIUM_BASE_PATH --log-timestamp \
+          --log-no-colors --relaxed-security --default-capabilities \
+          "{\"appium:deviceName\": \"$DEVICEFARM_DEVICE_NAME\", \
+          \"platformName\": \"$DEVICEFARM_DEVICE_PLATFORM_NAME\", \
+          \"appium:app\": \"$DEVICEFARM_APP_PATH\", \
+          \"appium:udid\":\"$DEVICEFARM_DEVICE_UDID_FOR_APPIUM\", \
+          \"appium:platformVersion\": \"$DEVICEFARM_DEVICE_OS_VERSION\", \
+          \"appium:derivedDataPath\": \"$DEVICEFARM_WDA_DERIVED_DATA_PATH\", \
+          \"appium:usePrebuiltWDA\": true, \
+          \"appium:automationName\": \"XCUITest\"}" \
+          >> $DEVICEFARM_LOG_DIR/appium.log 2>&1 &
+
+      - |-
+        appium_initialization_time=0;
+        until curl --silent --fail "http://0.0.0.0:4723${APPIUM_BASE_PATH}/status"; do
+          if [[ $appium_initialization_time -gt 30 ]]; then
+            echo "Appium did not start within 30 seconds. Exiting...";
+            exit 1;
+          fi;
+          appium_initialization_time=$((appium_initialization_time + 1));
+          echo "Waiting for Appium to start on port 4723...";
+          sleep 1;
+        done;
+      - echo "🔧 Setting up test environment..."
+      - echo "📱 Device Farm environment detected"
+      - echo "🎯 Target:df.ios"
+      - echo "📁 Current directory:$(pwd)"
+      - echo "📋 Checking compiled files..."
+      - ls
+      - ls -la dist/ || echo "No dist directory found"
+      - ls -la src/tests/ || echo "No src/tests directory found"
+      - echo "🔍 Checking for test files..."
+      - find . -name "*.test.js" -type f || echo "No .test.js files found"
+      - cd dist
+      - pwd
+      
+      
+  test:
+    commands:
+      - echo "🚀 Starting Device Farm tests..."
+      - TARGET=df.ios npx ts-node wdio/runner.js
+      
+  post_test:
+    commands:
+      - echo "📊 Test execution completed"
+      - echo "📁 Checking test results..."
+      - ls -la test-results/ || echo "No test-results directory found"
+      - echo "📋 Checking for any log files..."
+      - find . -name "*.log" -type f || echo "No log files found"
+
+artifacts:
+  - test-results/**/*
+  - "*.log"
+  - "**/*.log"
