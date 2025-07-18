@@ -4,41 +4,28 @@ from aws_cdk import (
 )
 from constructs import Construct
 import os
+import yaml
 
 class SystemTestsBuildProject(Construct):
 
     def __init__(self, scope: Construct, construct_id: str, android_project_arn: str, ios_project_arn: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        # Reference external buildspec file
+        # buildspec_path = os.path.join(os.path.dirname(__file__), "buildspec.yml")
         
-        # Create buildspec that references the external script
-        buildspec = codebuild.BuildSpec.from_object({
-            "version": "0.2",
-            "phases": {
-                "pre_build": {
-                    "commands": [
-                        "echo 'Execution started'",
-                        f"echo 'Android Device Farm Project ARN: {android_project_arn}'",
-                        f"echo 'iOS Device Farm Project ARN: {ios_project_arn}'",
-                        "echo 'Current working directory:' $(pwd)",
-                        "ls -la .",
-                        "echo 'Available scripts:'",
-                        "find . -name '*.sh' -type f"
-                    ]
-                },
-                "build": {
-                    "commands": [
-                        "chmod +x ./custom_constructs/system_tests_build_project/scripts/device-farm-runner.sh",
-                        f"./custom_constructs/system_tests_build_project/scripts/device-farm-runner.sh {android_project_arn} {ios_project_arn}"
-                    ]
-                }
-            }
-        })
+        # buildspec = codebuild.BuildSpec.from_source_filename(buildspec_path)
+
+        # Read buildspec from file
+        buildspec_path = os.path.join(os.path.dirname(__file__), "buildspec.yml")
+        with open(buildspec_path, "r") as file:
+            buildspec_content = yaml.safe_load(file)
 
         # Create CodeBuild project with custom image
         self.project = codebuild.Project(
             self, "SystemTestsBuildProject",
             project_name="system-tests-build-project",
-            build_spec=buildspec,
+            build_spec=codebuild.BuildSpec.from_object(buildspec_content),
             environment=codebuild.BuildEnvironment(
                 build_image=codebuild.LinuxBuildImage.from_asset(
                     self, "CustomBuildImage",
