@@ -1,8 +1,9 @@
 from aws_cdk import Stack
 from constructs import Construct
-from custom_constructs.codebuild_project import SystemTestsBuildProject
+
 from custom_constructs.system_tests_bucket import SystemTestsBucket
 from custom_constructs.system_tests_trigger.system_tests_trigger import SystemTestsTrigger
+from custom_constructs.system_tests_build_project.system_tests_build_project import SystemTestsBuildProject
 class SystemsTestStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, android_project_arn: str, ios_project_arn: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
