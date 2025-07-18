@@ -12,7 +12,7 @@ class SystemTestsBuildProject(Construct):
 
         # Create buildspec that handles the full Device Farm workflow
         buildspec = codebuild.BuildSpec.from_object({
-            "version": "0.2",
+            "version": 0.2,
             "phases": {
                 "pre_build": {
                     "commands": [
@@ -34,7 +34,7 @@ class SystemTestsBuildProject(Construct):
                     "commands": [
                         "echo 'Building test suite'",
                         "cd /workspace/test-suite",
-                        # "./scripts/build-and-zip.sh",
+                        "./scripts/build-and-zip.sh",
                         "echo 'Test suite build completed'",
                         "ls -la system_tests.zip || echo 'system_tests.zip not found'",
                         "",
@@ -43,16 +43,7 @@ class SystemTestsBuildProject(Construct):
                         "ls -la ./app_file",
                         "",
                         "echo 'Determining Device Farm project based on app type'",
-                        "if [ \"$APP_TYPE\" = \"ios\" ]; then",
-                        f"  PROJECT_ARN=\"{ios_project_arn}\"",
-                        "  echo 'Using iOS Device Farm project'",
-                        "elif [ \"$APP_TYPE\" = \"android\" ]; then",
-                        f"  PROJECT_ARN=\"{android_project_arn}\"", 
-                        "  echo 'Using Android Device Farm project'",
-                        "else",
-                        "  echo 'Unknown app type: $APP_TYPE'",
-                        "  exit 1",
-                        "fi",
+                        "if [ \"$APP_TYPE\" = \"ios\" ]; then PROJECT_ARN=\"{}\"; echo 'Using iOS Device Farm project'; elif [ \"$APP_TYPE\" = \"android\" ]; then PROJECT_ARN=\"{}\"; echo 'Using Android Device Farm project'; else echo 'Unknown app type: $APP_TYPE'; exit 1; fi".format(ios_project_arn, android_project_arn),
                         "",
                         "echo 'Uploading app to Device Farm'",
                         "APP_UPLOAD=$(aws devicefarm create-upload \\",
@@ -89,11 +80,7 @@ class SystemTestsBuildProject(Construct):
                         "echo 'Using device pool:' $DEVICE_POOLS",
                         "",
                         "echo 'Creating test run configuration'",
-                        "if [ \"$APP_TYPE\" = \"ios\" ]; then",
-                        "  BUILDSPEC_ARN=\"arn:aws:devicefarm:us-west-2::upload:appium-ios-test.yml\"",
-                        "else",
-                        "  BUILDSPEC_ARN=\"arn:aws:devicefarm:us-west-2::upload:appium-android-test.yml\"", 
-                        "fi",
+                        "if [ \"$APP_TYPE\" = \"ios\" ]; then BUILDSPEC_ARN=\"arn:aws:devicefarm:us-west-2::upload:appium-ios-test.yml\"; else BUILDSPEC_ARN=\"arn:aws:devicefarm:us-west-2::upload:appium-android-test.yml\"; fi",
                         "",
                         "echo 'Scheduling Device Farm test run'",
                         "RUN_RESULT=$(aws devicefarm schedule-run \\",
@@ -126,8 +113,8 @@ class SystemTestsBuildProject(Construct):
             environment=codebuild.BuildEnvironment(
                 build_image=codebuild.LinuxBuildImage.from_asset(
                     self, "CustomBuildImage",
-                    # Point to repository root where Dockerfile is located
-                    directory=os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+                    # Point to test-suite directory where Dockerfile is located
+                    directory=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "test-suite")
                 ),
                 compute_type=codebuild.ComputeType.SMALL,
                 privileged=True  # Enable privileged mode for Docker operations
@@ -147,10 +134,8 @@ class SystemTestsBuildProject(Construct):
                     "devicefarm:GetRun",
                     "devicefarm:ListRuns",
                     "devicefarm:ListDevicePools",
-                    "devicefarm:GetDevicePool"
+                    "devicefarm:GetDevicePool",
                 ],
                 resources=["*"]
             )
         )
-        
-        # S3 permissions will be granted by the SystemsTestStack via bucket.grant_read()

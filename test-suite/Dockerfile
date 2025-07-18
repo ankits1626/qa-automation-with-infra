@@ -28,7 +28,7 @@ RUN npm install -g pnpm
 WORKDIR /workspace
 
 # Copy the entire repository structure
-COPY . /workspace/
+COPY . /workspace/test-suite/
 
 # Make scripts executable
 RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
@@ -37,4 +37,4 @@ RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
 RUN cd /workspace/test-suite && pnpm install
 
 # Set the default working directory
-WORKDIR /workspace
+WORKDIR /workspace/test-suite
