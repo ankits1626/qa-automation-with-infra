@@ -1,38 +1,31 @@
-# Use Node.js from Amazon ECR Public (no rate limits)
-FROM public.ecr.aws/docker/library/node:20-slim
+# Alternative: Use AWS Lambda Python base image (has boto3 pre-installed)
+FROM public.ecr.aws/lambda/python:3.11
 
-# Update package list and install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
+# Install Node.js and other system dependencies
+RUN yum update -y && yum install -y \
+    nodejs npm \
     git \
-    python3 \
-    python3-pip \
-    build-essential \
     zip \
     unzip \
     jq \
-    ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && yum clean all
 
-# Install Python packages needed for Device Farm integration
-RUN pip3 install --no-cache-dir requests boto3
-
-# Install pnpm globally
+# Install pnpm
 RUN npm install -g pnpm
+
+# Install additional Python packages (boto3 already included)
+RUN pip install --no-cache-dir requests
 
 # Set working directory
 WORKDIR /workspace
 
-# Copy test-suite to /workspace/test-suite (since Docker context is test-suite/)
-# This will include handler.py if it's in the test-suite directory
+# Copy test-suite
 COPY . /workspace/test-suite/
 
-# Make scripts executable
+# Make scripts executable  
 RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
 
-# Install Node.js dependencies for test-suite using pnpm (force clean install)
+# Install Node.js dependencies
 RUN cd /workspace/test-suite && rm -rf node_modules && pnpm install --frozen-lockfile
 
-# Set the default working directory to test-suite
 WORKDIR /workspace/test-suite
