@@ -223,7 +223,6 @@ class DeviceFarmTestRunner:
             
             # Upload file using pre-signed URL with proper headers
             import requests
-            import os
             
             # Extract filename for Content-Disposition header
             filename = os.path.basename(file_path)
