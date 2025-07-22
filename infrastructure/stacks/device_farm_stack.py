@@ -1,71 +1,75 @@
 from aws_cdk import (
-    Stack,
-    RemovalPolicy,
-    aws_devicefarm as devicefarm,
+   Stack,
+   aws_devicefarm as devicefarm,
 )
 from constructs import Construct
 
 class DeviceFarmStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+   def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+       super().__init__(scope, construct_id, **kwargs)
 
-        # Android Device Farm project
-        android_project = devicefarm.CfnProject(
-            self, "AndroidProject",
-            name="android-test-project"
-        )
+       # Add unique suffix to avoid export conflicts
+       stack_suffix = self.region
 
-        # iOS Device Farm project
-        ios_project = devicefarm.CfnProject(
-            self, "IOSProject",
-            name="ios-test-project"
-        )
+       # Android Device Farm project
+       android_project = devicefarm.CfnProject(
+           self, "AndroidProject",
+           name=f"android-test-project-{stack_suffix}"
+       )
 
-        # Android device pool
-        android_device_pool = devicefarm.CfnDevicePool(
-            self, "AndroidDevicePool",
-            name="android-device-pool",
-            project_arn=android_project.attr_arn,
-            rules=[
-                devicefarm.CfnDevicePool.RuleProperty(
-                    attribute="OS_VERSION",
-                    operator="GREATER_THAN_OR_EQUALS",
-                    value='"10"'
-                ),
-                devicefarm.CfnDevicePool.RuleProperty(
-                    attribute="PLATFORM",
-                    operator="EQUALS",
-                    value='"ANDROID"'
-                )
-            ]
-        )
+       # iOS Device Farm project
+       ios_project = devicefarm.CfnProject(
+           self, "IOSProject",
+           name=f"ios-test-project-{stack_suffix}"
+       )
 
-        # iOS device pool
-        ios_device_pool = devicefarm.CfnDevicePool(
-            self, "IOSDevicePool",
-            name="ios-device-pool",
-            project_arn=ios_project.attr_arn,
-            rules=[
-                devicefarm.CfnDevicePool.RuleProperty(
-                    attribute="OS_VERSION",
-                    operator="GREATER_THAN_OR_EQUALS",
-                    value='"14.0"'
-                ),
-                devicefarm.CfnDevicePool.RuleProperty(
-                    attribute="PLATFORM",
-                    operator="EQUALS",
-                    value='"IOS"'
-                )
-            ]
-        )
+       # Android device pool
+       android_device_pool = devicefarm.CfnDevicePool(
+           self, "AndroidDevicePool",
+           name=f"android-device-pool-{stack_suffix}",
+           project_arn=android_project.attr_arn,
+           rules=[
+               devicefarm.CfnDevicePool.RuleProperty(
+                   attribute="OS_VERSION",
+                   operator="GREATER_THAN_OR_EQUALS",
+                   value='"10"'
+               ),
+               devicefarm.CfnDevicePool.RuleProperty(
+                   attribute="PLATFORM",
+                   operator="EQUALS",
+                   value='"ANDROID"'
+               )
+           ]
+       )
 
-        # Expose project ARNs as properties
-        self.android_project_arn = android_project.attr_arn
-        self.ios_project_arn = ios_project.attr_arn
+       # iOS device pool
+       ios_device_pool = devicefarm.CfnDevicePool(
+           self, "IOSDevicePool",
+           name=f"ios-device-pool-{stack_suffix}",
+           project_arn=ios_project.attr_arn,
+           rules=[
+               devicefarm.CfnDevicePool.RuleProperty(
+                   attribute="OS_VERSION",
+                   operator="GREATER_THAN_OR_EQUALS",
+                   value='"14.0"'
+               ),
+               devicefarm.CfnDevicePool.RuleProperty(
+                   attribute="PLATFORM",
+                   operator="EQUALS",
+                   value='"IOS"'
+               )
+           ]
+       )
 
-        # Add removal policy to prevent accidental deletion
-        android_project.apply_removal_policy(RemovalPolicy.RETAIN)
-        ios_project.apply_removal_policy(RemovalPolicy.RETAIN)
-        android_device_pool.apply_removal_policy(RemovalPolicy.RETAIN)
-        ios_device_pool.apply_removal_policy(RemovalPolicy.RETAIN)
+       # Store ARNs privately first
+       self._android_project_arn = android_project.attr_arn
+       self._ios_project_arn = ios_project.attr_arn
+
+   @property
+   def android_project_arn(self):
+       return self._android_project_arn
+       
+   @property
+   def ios_project_arn(self):
+       return self._ios_project_arn
