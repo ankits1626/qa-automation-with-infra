@@ -200,10 +200,11 @@ class DeviceFarmTestRunner:
         # Determine upload type and name
         if upload_type == 'app':
             df_upload_type = f"{self.config['APP_TYPE'].upper()}_APP"
-            upload_name = f"app-{timestamp}"
+            # Use the original filename from S3
+            upload_name = os.path.basename(self.config['APP_FILE_PATH'])
         elif upload_type == 'test':
             df_upload_type = "APPIUM_NODE_TEST_PACKAGE"
-            upload_name = f"tests-{timestamp}"
+            upload_name = f"tests-{timestamp}.zip"
         else:
             raise ValueError(f"Unknown upload type: {upload_type}")
         
