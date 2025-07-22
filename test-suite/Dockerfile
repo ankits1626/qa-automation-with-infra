@@ -15,11 +15,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install AWS CLI v2 (more reliable than pip install)
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-    && unzip awscliv2.zip \
-    && ./aws/install \
-    && rm -rf awscliv2.zip aws
+# Install Python packages needed for Device Farm integration
+RUN pip3 install --no-cache-dir requests boto3
 
 # Install pnpm globally
 RUN npm install -g pnpm
@@ -28,6 +25,7 @@ RUN npm install -g pnpm
 WORKDIR /workspace
 
 # Copy test-suite to /workspace/test-suite (since Docker context is test-suite/)
+# This will include handler.py if it's in the test-suite directory
 COPY . /workspace/test-suite/
 
 # Make scripts executable

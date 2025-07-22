@@ -103,10 +103,22 @@ class DeviceFarmTestRunner:
         """Build test suite using existing build script"""
         logger.info("Building test suite using build-and-zip.sh")
         
-        # Change to test suite directory
-        test_suite_dir = "/tmp/codebuild-workspace/test-suite"
-        if not os.path.exists(test_suite_dir):
-            raise FileNotFoundError(f"Test suite directory not found: {test_suite_dir}")
+        # Try multiple possible locations for test suite
+        possible_dirs = [
+            "/workspace/test-suite",  # Docker image location
+            "/tmp/codebuild-workspace/test-suite",  # Alternative CodeBuild location
+            "."  # Current directory
+        ]
+        
+        test_suite_dir = None
+        for dir_path in possible_dirs:
+            if os.path.exists(dir_path) and os.path.exists(os.path.join(dir_path, "scripts", "build-and-zip.sh")):
+                test_suite_dir = dir_path
+                logger.info(f"Found test suite directory at: {test_suite_dir}")
+                break
+        
+        if not test_suite_dir:
+            raise FileNotFoundError(f"Test suite directory not found. Tried: {possible_dirs}")
         
         # Run the build script
         build_script = os.path.join(test_suite_dir, "scripts", "build-and-zip.sh")
@@ -195,8 +207,8 @@ class DeviceFarmTestRunner:
             logger.info(f"Created {upload_type} upload with ARN: {upload_arn}")
             
             # Upload file using pre-signed URL
+            import requests
             with open(file_path, 'rb') as f:
-                import requests
                 response = requests.put(upload_url, data=f)
                 response.raise_for_status()
             

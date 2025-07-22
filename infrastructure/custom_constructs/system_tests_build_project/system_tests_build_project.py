@@ -17,31 +17,29 @@ class SystemTestsBuildProject(Construct):
             build_spec=codebuild.BuildSpec.from_object({
                 "version": "0.2",
                 "phases": {
-                    "install": {
-                        "runtime-versions": {
-                            "python": "3.11"
-                        },
-                        "commands": [
-                            # Install requests for Device Farm uploads
-                            "pip install requests"
-                        ]
-                    },
                     "pre_build": {
                         "commands": [
+                            # Navigate to test-suite directory (where handler.py is)
+                            "cd /workspace/test-suite",
+                            "pwd",
+                            "ls -la",
+                            # Verify Python and dependencies
+                            "python3 --version",
+                            "python3 -c 'import boto3; print(\"boto3 available\")'",
+                            "python3 -c 'import requests; print(\"requests available\")'",
                             # Show environment for debugging
                             "echo 'Environment variables:'",
                             "echo 'ANDROID_PROJECT_ARN='$ANDROID_PROJECT_ARN",
                             "echo 'IOS_PROJECT_ARN='$IOS_PROJECT_ARN", 
                             "echo 'S3_BUCKET='$S3_BUCKET",
                             "echo 'APP_FILE_PATH='$APP_FILE_PATH",
-                            "echo 'APP_TYPE='$APP_TYPE",
-                            "echo 'Current working directory:'$(pwd)",
-                            "ls -la"
+                            "echo 'APP_TYPE='$APP_TYPE"
                         ]
                     },
                     "build": {
                         "commands": [
-                            "python handler.py"
+                            "cd /workspace/test-suite",
+                            "python3 handler.py"
                         ]
                     }
                 }
