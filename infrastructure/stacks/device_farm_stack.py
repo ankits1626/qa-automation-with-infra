@@ -1,5 +1,6 @@
 from aws_cdk import (
     Stack,
+    RemovalPolicy,
     aws_devicefarm as devicefarm,
 )
 from constructs import Construct
@@ -62,3 +63,9 @@ class DeviceFarmStack(Stack):
         # Expose project ARNs as properties
         self.android_project_arn = android_project.attr_arn
         self.ios_project_arn = ios_project.attr_arn
+
+        # Add removal policy to prevent accidental deletion
+        android_project.apply_removal_policy(RemovalPolicy.RETAIN)
+        ios_project.apply_removal_policy(RemovalPolicy.RETAIN)
+        android_device_pool.apply_removal_policy(RemovalPolicy.RETAIN)
+        ios_device_pool.apply_removal_policy(RemovalPolicy.RETAIN)
