@@ -150,7 +150,10 @@ class DeviceFarmTestRunner:
         """Download app file from S3"""
         logger.info(f"Downloading app from s3://{self.config['S3_BUCKET']}/{self.config['APP_FILE_PATH']}")
         
-        local_app_path = "/tmp/app_file"
+        # Preserve the original filename and extension
+        import os.path
+        filename = os.path.basename(self.config['APP_FILE_PATH'])
+        local_app_path = f"/tmp/{filename}"
         
         try:
             self.s3_client.download_file(
@@ -158,8 +161,19 @@ class DeviceFarmTestRunner:
                 self.config['APP_FILE_PATH'],
                 local_app_path
             )
+            
+            # Basic validation without file size check
+            file_size = os.path.getsize(local_app_path)
             logger.info(f"App downloaded successfully to {local_app_path}")
+            logger.info(f"File size: {file_size} bytes ({file_size / (1024*1024):.2f} MB)")
+            
+            # Basic file validation
+            if file_size == 0:
+                raise ValueError("Downloaded file is empty")
+            
+            logger.info(f"Downloaded file: {filename}")
             return local_app_path
+            
         except Exception as e:
             logger.error(f"Failed to download app from S3: {str(e)}")
             raise
@@ -231,15 +245,25 @@ class DeviceFarmTestRunner:
         while time.time() - start_time < max_wait_time:
             try:
                 response = self.devicefarm_client.get_upload(arn=upload_arn)
-                status = response['upload']['status']
+                upload_info = response['upload']
+                status = upload_info['status']
                 
                 logger.info(f"Upload status: {status}")
+                
+                # Log additional details for debugging
+                if 'message' in upload_info:
+                    logger.info(f"Upload message: {upload_info['message']}")
+                if 'metadata' in upload_info:
+                    logger.info(f"Upload metadata: {upload_info['metadata']}")
                 
                 if status == 'SUCCEEDED':
                     logger.info("Upload processed successfully")
                     return
                 elif status == 'FAILED':
-                    raise RuntimeError("Upload processing failed")
+                    error_msg = f"Upload processing failed. Status: {status}"
+                    if 'message' in upload_info:
+                        error_msg += f". Message: {upload_info['message']}"
+                    raise RuntimeError(error_msg)
                 
                 time.sleep(10)  # Wait 10 seconds before checking again
                 
