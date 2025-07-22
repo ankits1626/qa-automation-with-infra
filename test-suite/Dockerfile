@@ -1,20 +1,28 @@
-# Alternative: Use AWS Lambda Python base image (has boto3 pre-installed)
-FROM public.ecr.aws/lambda/python:3.11
+# Use Node.js base (we know this works) and add boto3
+FROM public.ecr.aws/docker/library/node:20-slim
 
-# Install Node.js and other system dependencies
-RUN yum update -y && yum install -y \
-    nodejs npm \
+# Install system dependencies including python
+RUN apt-get update && apt-get install -y \
+    curl \
     git \
+    python3 \
+    python3-pip \
+    python3-venv \
+    build-essential \
     zip \
     unzip \
     jq \
-    && yum clean all
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm
+# Create virtual environment and install Python packages
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir boto3 requests
+
+# Install pnpm globally (this will work since we have Node.js)
 RUN npm install -g pnpm
-
-# Install additional Python packages (boto3 already included)
-RUN pip install --no-cache-dir requests
 
 # Set working directory
 WORKDIR /workspace
