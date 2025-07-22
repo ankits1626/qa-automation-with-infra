@@ -2,9 +2,7 @@ version: 0.2
 
 env:
   variables:
-    # These will be set by the CodeBuild project
-    ANDROID_PROJECT_ARN: ""
-    IOS_PROJECT_ARN: ""
+    AWS_DEFAULT_REGION: "us-west-2"
 
 phases:
   pre_build:
