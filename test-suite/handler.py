@@ -282,6 +282,58 @@ class DeviceFarmTestRunner:
         
         raise TimeoutError(f"Upload processing timed out after {max_wait_time} seconds")
     
+    def _upload_existing_test_spec(self, project_arn: str, timestamp: str) -> str:
+        """Upload existing test spec file from test suite to Device Farm"""
+        logger.info("Uploading existing test spec to Device Farm")
+        
+        # Test spec file is at the same level as handler.py
+        test_spec_filename = "appium-ios-test.yml"
+        test_spec_path = os.path.join(os.path.dirname(__file__), test_spec_filename)
+        
+        # Fallback to current directory if __file__ approach doesn't work
+        if not os.path.exists(test_spec_path):
+            test_spec_path = test_spec_filename
+        
+        if not os.path.exists(test_spec_path):
+            raise FileNotFoundError(f"Test spec file '{test_spec_filename}' not found at: {test_spec_path}")
+        
+        logger.info(f"Found test spec file at: {test_spec_path}")
+        
+        try:
+            # Create upload for test spec
+            response = self.devicefarm_client.create_upload(
+                projectArn=project_arn,
+                name=f"appium-ios-test-spec-{timestamp}.yml",
+                type="APPIUM_NODE_TEST_SPEC"
+            )
+            
+            upload_arn = response['upload']['arn']
+            upload_url = response['upload']['url']
+            
+            logger.info(f"Created test spec upload with ARN: {upload_arn}")
+            
+            # Upload test spec file
+            import requests
+            filename = os.path.basename(test_spec_path)
+            headers = {
+                'Content-Disposition': f'attachment; filename="{filename}"'
+            }
+            
+            with open(test_spec_path, 'rb') as f:
+                response = requests.put(upload_url, data=f, headers=headers)
+                response.raise_for_status()
+            
+            logger.info("Existing test spec uploaded successfully")
+            
+            # Wait for upload to be processed
+            self._wait_for_upload_processing(upload_arn)
+            
+            return upload_arn
+            
+        except Exception as e:
+            logger.error(f"Failed to upload existing test spec to Device Farm: {str(e)}")
+            raise
+    
     def _schedule_test_run(self, project_arn: str, app_arn: str, test_arn: str, timestamp: str) -> Dict[str, Any]:
         """Schedule the Device Farm test run"""
         logger.info("Scheduling Device Farm test run")
@@ -297,7 +349,10 @@ class DeviceFarmTestRunner:
             device_pool_arn = device_pools[0]['arn']
             logger.info(f"Using device pool: {device_pool_arn}")
             
-            # Schedule the run
+            # Upload the existing test spec file
+            test_spec_arn = self._upload_existing_test_spec(project_arn, timestamp)
+            
+            # Schedule the run using custom environment mode
             run_name = f"SystemTest-{timestamp}"
             response = self.devicefarm_client.schedule_run(
                 projectArn=project_arn,
@@ -306,7 +361,8 @@ class DeviceFarmTestRunner:
                 name=run_name,
                 test={
                     'type': 'APPIUM_NODE',
-                    'testPackageArn': test_arn
+                    'testPackageArn': test_arn,
+                    'testSpecArn': test_spec_arn  # Required for custom environment mode
                 }
             )
             
@@ -318,6 +374,7 @@ class DeviceFarmTestRunner:
                 'run_name': run_name,
                 'project_arn': project_arn,
                 'device_pool_arn': device_pool_arn,
+                'test_spec_arn': test_spec_arn,
                 'timestamp': timestamp
             }
             
