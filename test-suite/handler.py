@@ -220,10 +220,19 @@ class DeviceFarmTestRunner:
             
             logger.info(f"Created {upload_type} upload with ARN: {upload_arn}")
             
-            # Upload file using pre-signed URL
+            # Upload file using pre-signed URL with proper headers
             import requests
+            import os
+            
+            # Extract filename for Content-Disposition header
+            filename = os.path.basename(file_path)
+            
+            headers = {
+                'Content-Disposition': f'attachment; filename="{filename}"'
+            }
+            
             with open(file_path, 'rb') as f:
-                response = requests.put(upload_url, data=f)
+                response = requests.put(upload_url, data=f, headers=headers)
                 response.raise_for_status()
             
             logger.info(f"{upload_type.capitalize()} uploaded successfully")
