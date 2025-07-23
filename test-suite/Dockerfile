@@ -33,7 +33,16 @@ COPY . /workspace/test-suite/
 # Make scripts executable  
 RUN chmod +x /workspace/test-suite/scripts/build-and-zip.sh
 
-# Install Node.js dependencies
+# Install Node.js dependencies first
 RUN cd /workspace/test-suite && rm -rf node_modules && pnpm install --frozen-lockfile
 
+# Build test suite during Docker image creation
+RUN cd /workspace/test-suite && \
+    echo "🔨 Building test suite during Docker build..." && \
+    ./scripts/build-and-zip.sh && \
+    echo "✅ Test suite build completed" && \
+    ls -la system_tests.zip && \
+    echo "📦 Test suite zip file size: $(du -h system_tests.zip | cut -f1)"
+
+# Set the default working directory to test-suite
 WORKDIR /workspace/test-suite

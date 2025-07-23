@@ -73,9 +73,9 @@ class DeviceFarmTestRunner:
         
         logger.info("Starting test execution workflow")
         
-        # 1. Build test suite
-        logger.info("Step 1: Building test suite")
-        test_package_path = self._build_test_suite()
+        # 1. Use pre-built test suite (no building needed)
+        logger.info("Step 1: Using pre-built test suite")
+        test_package_path = self._get_prebuilt_test_suite()
         
         # 2. Download app from S3
         logger.info("Step 2: Downloading app from S3")
@@ -99,51 +99,32 @@ class DeviceFarmTestRunner:
         logger.info("Test execution workflow completed successfully")
         return run_result
     
-    def _build_test_suite(self) -> str:
-        """Build test suite using existing build script"""
-        logger.info("Building test suite using build-and-zip.sh")
+    def _get_prebuilt_test_suite(self) -> str:
+        """Get the pre-built test suite zip file that was created during Docker build"""
+        logger.info("Using pre-built test suite from Docker image")
         
-        # Try multiple possible locations for test suite
-        possible_dirs = [
-            "/workspace/test-suite",  # Docker image location
-            "/tmp/codebuild-workspace/test-suite",  # Alternative CodeBuild location
-            "."  # Current directory
-        ]
+        # The test suite was built during Docker image creation
+        zip_path = "/workspace/test-suite/system_tests.zip"
         
-        test_suite_dir = None
-        for dir_path in possible_dirs:
-            if os.path.exists(dir_path) and os.path.exists(os.path.join(dir_path, "scripts", "build-and-zip.sh")):
-                test_suite_dir = dir_path
-                logger.info(f"Found test suite directory at: {test_suite_dir}")
-                break
-        
-        if not test_suite_dir:
-            raise FileNotFoundError(f"Test suite directory not found. Tried: {possible_dirs}")
-        
-        # Run the build script
-        build_script = os.path.join(test_suite_dir, "scripts", "build-and-zip.sh")
-        if not os.path.exists(build_script):
-            raise FileNotFoundError(f"Build script not found: {build_script}")
-        
-        result = subprocess.run(
-            ["bash", build_script],
-            cwd=test_suite_dir,
-            capture_output=True,
-            text=True
-        )
-        
-        if result.returncode != 0:
-            logger.error(f"Build script failed with return code {result.returncode}")
-            logger.error(f"STDOUT: {result.stdout}")
-            logger.error(f"STDERR: {result.stderr}")
-            raise RuntimeError(f"Test suite build failed: {result.stderr}")
-        
-        # Check if the zip file was created
-        zip_path = os.path.join(test_suite_dir, "system_tests.zip")
         if not os.path.exists(zip_path):
-            raise FileNotFoundError("system_tests.zip not found after build")
+            # Fallback: check current directory in case paths differ
+            fallback_path = "system_tests.zip"
+            if os.path.exists(fallback_path):
+                zip_path = fallback_path
+            else:
+                raise FileNotFoundError(
+                    f"Pre-built test suite not found at {zip_path} or {fallback_path}. "
+                    "Docker build may have failed or test suite build was unsuccessful."
+                )
         
-        logger.info("Test suite built successfully")
+        # Verify the zip file is valid
+        file_size = os.path.getsize(zip_path)
+        if file_size == 0:
+            raise ValueError(f"Pre-built test suite is empty: {zip_path}")
+        
+        logger.info(f"Found pre-built test suite: {zip_path}")
+        logger.info(f"Test suite size: {file_size} bytes ({file_size / (1024*1024):.2f} MB)")
+        
         return zip_path
     
     def _download_app(self) -> str:
